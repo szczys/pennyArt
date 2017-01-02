@@ -82,8 +82,7 @@ def calcVertices(xSize,ySize,horizontalBisect,verticalDist):
         if curX > (xSize-horizontalBisect):
             row += 1
             curX = horizontalBisect+((row%2)*horizontalBisect)
-            #curY = int(round((verticalDist*row)+horizontalBisect))
-            curY = curY + int(round(verticalDist))
+            curY = curY + verticalDist
             if curY > (ySize-horizontalBisect):
                 return allVertices
 
@@ -111,7 +110,7 @@ def runGame(sizeX,sizeY,radius):
     horizontalBisect = radius
 
     #vertial is trickier (non-integer)
-    verticalDist = sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2))
+    verticalDist = int(sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2)))
 
     #stock colors
     red = (255,0,0)
