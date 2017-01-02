@@ -1,9 +1,6 @@
 import pygame
 import sys
-
-#393x488
-x = 786
-y = 976
+from math import sqrt
 
 #### Calculating Luminance ####
 #http://stackoverflow.com/a/689547
@@ -52,7 +49,9 @@ def getAllPointsInCircle(x,y,r):
         allPoints.add((reflectX,reflectY))
     return allPoints
 
+
 def testPoints(x):
+    #Just a quick test to sanity check circle points set
     for i in range(21):
             thisRow = ""
             for j in range(21):
@@ -72,22 +71,13 @@ darkBlue = (0,0,128)
 white = (255,255,255)
 black = (0,0,0)
 pink = (255,200,200)
-
-#Begin messy triangle prototyping
-
-#horizontal distances should be easy:
-horizontalBisect = 15
-
-#vertial is trickier (non-integer)
-from math import sqrt
-verticalDist = sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2))
-
-def vertRounded(multiple):
+'''
+def vertRounded(multiple,verticalDist):
     #give this function a multiple to use with verticalDist
     #it will return the nearest integer to plot in display
     return int(round(multiple*verticalDist))
-
-def calcVertices(xSize,ySize):
+'''
+def calcVertices(xSize,ySize,horizontalBisect,verticalDist):
     #returns points for equidistance circle centers in plane bound by x,y
     allVertices = []
 
@@ -118,13 +108,34 @@ def getPixelArray(filename):
         raise SystemExit, message
     return pygame.surfarray.array3d(image)
 
+def getLuminosityValues(listOfPoints, scalingValue, sourceImage):
+    #scaling value is how much to divide the
+    #xy values by to fit within source image resolution
+    lumList = []
+    return lumList
+
 def runGame():
+    #393x488
+    pygameSurfaceX = 393
+    pygameSurfaceY = 488
+
+    #horizontal distances should be easy:
+    horizontalBisect = 7
+
+    #vertial is trickier (non-integer)
+    verticalDist = sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2))
+
     pygame.init()
-    screen = pygame.display.set_mode((x,y))
+    screen = pygame.display.set_mode((pygameSurfaceX,pygameSurfaceY))
     screen.fill(red)
 
-    testPoints = calcVertices(x,y)
+    #Get a list of all points
+    testPoints = calcVertices(pygameSurfaceX, \
+                              pygameSurfaceY, \
+                              horizontalBisect, \
+                              verticalDist)
 
+    
     pixels = getPixelArray('mahler2.jpg')
     print pixels.shape
 
