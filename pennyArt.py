@@ -11,9 +11,9 @@ from math import sqrt
 def luminance(pixelColors):
     #pixelColors will be 3 value tuple
     gamma = 2.2
-    lum = (.2126 * ((pixelColors[0]/255)**gamma)) + \
-          (.7152 * ((pixelColors[1]/255)**gamma)) + \
-          (.0722 * ((pixelColors[2]/255)**gamma))
+    lum = (.2126 * pixelColors[0]) + \
+          (.7152 * pixelColors[1]) + \
+          (.0722 * pixelColors[2])
 
     
     return lum
@@ -95,9 +95,30 @@ def getPixelArray(filename):
         raise SystemExit, message
     return pygame.surfarray.array3d(image)
 
-def getLuminosityValues(listOfPoints, scalingValue, sourceImage):
+def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceImage):
     #scaling value is how much to divide the
     #xy values by to fit within source image resolution
+
+        #Get pixel data from source image
+    pixels = getPixelArray(sourceImage)
+    print pixels.shape
+
+    #iterate each point in listOfPoints
+    for point in listOfPoints:
+        #get list of points in circle around each point
+        thisCirclePoints = getAllPointsInCircle(point[0]/scalingValue, \
+                             point[1]/scalingValue, \
+                             radiusBeforeScaling/scalingValue \
+                             )
+        lumSum = 0
+        for circlePoint in thisCirclePoints:
+            lumSum += luminance(pixels[circlePoint[0]][circlepoint[1]])
+        print lumSum
+        
+    ##(utilize scaling to match source resolution)
+    #Calculate average luminosity of all harvested points
+    #associate this value with the xy inputs
+    
     lumList = []
     return lumList
 
@@ -131,9 +152,9 @@ def runGame(sizeX,sizeY,radius):
                               horizontalBisect, \
                               verticalDist)
 
+    #Get pixel data from source image
+    getLuminosityValues(testPoints, 2, 'mahler2.jpg')
     
-    pixels = getPixelArray('mahler2.jpg')
-    print pixels.shape
 
 
     #pygame.draw.lines(screen, blue, True, testPoints, 2)
