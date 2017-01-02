@@ -2,6 +2,12 @@ import pygame
 import sys
 from math import sqrt
 
+#### Testruns: ####
+
+# mahler2 runGame(786,976,8)
+# mahler2-lowcontrast.jpg runGame(786,976,8)
+# mahler2-cropped.jpg runGame(534,798,8)
+
 #### Calculating Luminance ####
 #http://stackoverflow.com/a/689547
 # first divide R G B by 255, and compute
@@ -11,10 +17,15 @@ from math import sqrt
 def luminance(pixelColors):
     #pixelColors will be 3 value tuple
     gamma = 2.2
+    '''
     lum = (.2126 * pixelColors[0]) + \
           (.7152 * pixelColors[1]) + \
           (.0722 * pixelColors[2])
-
+    '''
+    
+    lum = (.299 * pixelColors[0]) + \
+          (.587 * pixelColors[1]) + \
+          (.114 * pixelColors[2])
     
     return int(lum)
 
@@ -103,7 +114,7 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
     
     #Get pixel data from source image
     pixels = getPixelArray(sourceImage)
-    print pixels.shape
+    #print pixels.shape
 
     #iterate each point in listOfPoints
     for point in listOfPoints:
@@ -116,8 +127,8 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
         for circlePoint in thisCirclePoints:
             lumSum += luminance(pixels[circlePoint[0]][circlePoint[1]])
         lumAvg = lumSum/len(thisCirclePoints)
-        print lumAvg
-        lumList.append([circlePoint,lumAvg])
+        #print point,lumAvg
+        lumList.append([point,lumAvg])
         
     ##(utilize scaling to match source resolution)
     #Calculate average luminosity of all harvested points
@@ -156,15 +167,25 @@ def runGame(sizeX,sizeY,radius):
                               verticalDist)
 
     #Get pixel data from source image
-    getLuminosityValues(testPoints, 2, radius, 'mahler2.jpg')
+    #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2.jpg')
+    #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2-lowcontrast.jpg')
+    circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2-cropped.jpg')
     
-
+    print len(circlesAndLum)
+    for group in circlesAndLum:
+        pygame.draw.circle(screen, \
+                           (group[1],group[1],group[1]), \
+                           group[0],
+                           horizontalBisect \
+                           )
 
     #pygame.draw.lines(screen, blue, True, testPoints, 2)
 
+    '''
+    #this just draws blue circles (was used for testing)
     for points in testPoints:
         pygame.draw.circle(screen, blue, points,horizontalBisect)
-
+    '''
 
 
     pygame.display.update()
