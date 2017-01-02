@@ -63,20 +63,6 @@ def testPoints(x):
 
 ###################################
 
-
-red = (255,0,0)
-green = (0,255,0)
-blue = (0,0,255)
-darkBlue = (0,0,128)
-white = (255,255,255)
-black = (0,0,0)
-pink = (255,200,200)
-'''
-def vertRounded(multiple,verticalDist):
-    #give this function a multiple to use with verticalDist
-    #it will return the nearest integer to plot in display
-    return int(round(multiple*verticalDist))
-'''
 def calcVertices(xSize,ySize,horizontalBisect,verticalDist):
     #returns points for equidistance circle centers in plane bound by x,y
     allVertices = []
@@ -96,11 +82,13 @@ def calcVertices(xSize,ySize,horizontalBisect,verticalDist):
         if curX > (xSize-horizontalBisect):
             row += 1
             curX = horizontalBisect+((row%2)*horizontalBisect)
-            curY = int(round((verticalDist*row)+horizontalBisect))
+            #curY = int(round((verticalDist*row)+horizontalBisect))
+            curY = curY + int(round(verticalDist))
             if curY > (ySize-horizontalBisect):
                 return allVertices
 
 def getPixelArray(filename):
+    #Get all RGB pixel colors from this image file
     try:
         image = pygame.image.load(filename)
     except pygame.error, message:
@@ -114,16 +102,25 @@ def getLuminosityValues(listOfPoints, scalingValue, sourceImage):
     lumList = []
     return lumList
 
-def runGame():
+def runGame(sizeX,sizeY,radius):
     #393x488
-    pygameSurfaceX = 393
-    pygameSurfaceY = 488
+    pygameSurfaceX = sizeX
+    pygameSurfaceY = sizeY
 
     #horizontal distances should be easy:
-    horizontalBisect = 7
+    horizontalBisect = radius
 
     #vertial is trickier (non-integer)
     verticalDist = sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2))
+
+    #stock colors
+    red = (255,0,0)
+    green = (0,255,0)
+    blue = (0,0,255)
+    darkBlue = (0,0,128)
+    white = (255,255,255)
+    black = (0,0,0)
+    pink = (255,200,200)
 
     pygame.init()
     screen = pygame.display.set_mode((pygameSurfaceX,pygameSurfaceY))
