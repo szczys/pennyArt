@@ -16,7 +16,7 @@ def luminance(pixelColors):
           (.0722 * pixelColors[2])
 
     
-    return lum
+    return int(lum)
 
 ###############################
 
@@ -99,7 +99,9 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
     #scaling value is how much to divide the
     #xy values by to fit within source image resolution
 
-        #Get pixel data from source image
+    lumList = []
+    
+    #Get pixel data from source image
     pixels = getPixelArray(sourceImage)
     print pixels.shape
 
@@ -112,14 +114,15 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
                              )
         lumSum = 0
         for circlePoint in thisCirclePoints:
-            lumSum += luminance(pixels[circlePoint[0]][circlepoint[1]])
-        print lumSum
+            lumSum += luminance(pixels[circlePoint[0]][circlePoint[1]])
+        lumAvg = lumSum/len(thisCirclePoints)
+        print lumAvg
+        lumList.append([circlePoint,lumAvg])
         
     ##(utilize scaling to match source resolution)
     #Calculate average luminosity of all harvested points
     #associate this value with the xy inputs
     
-    lumList = []
     return lumList
 
 def runGame(sizeX,sizeY,radius):
@@ -153,7 +156,7 @@ def runGame(sizeX,sizeY,radius):
                               verticalDist)
 
     #Get pixel data from source image
-    getLuminosityValues(testPoints, 2, 'mahler2.jpg')
+    getLuminosityValues(testPoints, 2, radius, 'mahler2.jpg')
     
 
 
