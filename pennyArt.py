@@ -136,16 +136,25 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
     
     return lumList
 
-def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
+def samplePennies(baseName = 'sampleSet/{number}-penny.png',imgDiameter=324,sampleCount=61):
     #process the penny sample set to characterize their luminance values
     #returns list of tuples: (luminance value, image name)
+
+    #default image names look like: 'sampleSet/0001-penny.png'
+    #images should be square with penning spanning edge to edge
+    #this will automatically poll largest circular area in the image
+
+    radius = imgDiameter/2 
+    if radius%2 == 0:
+        radius -= 1
+    
     pennySet = []
-    for i in range(1,62):
+    for i in range(1,sampleCount+1):
         #Normalize the number for the filename
         thisNum = str(i)
         thisNum = '0'*(4-len(thisNum)) + thisNum
         imgName = baseName.format(number=thisNum)
-        lumValue = getLuminosityValues([(161,161)],1,161,imgName)[0][1]
+        lumValue = getLuminosityValues([(radius,radius)],1,radius,imgName)[0][1]
         pennySet.append((lumValue,imgName))
         print pennySet[-1]
     return pennySet
