@@ -136,6 +136,20 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
     
     return lumList
 
+def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
+    #process the penny sample set to characterize their luminance values
+    #returns list of tuples: (luminance value, image name)
+    pennySet = []
+    for i in range(1,62):
+        #Normalize the number for the filename
+        thisNum = str(i)
+        thisNum = '0'*(4-len(thisNum)) + thisNum
+        imgName = baseName.format(number=thisNum)
+        lumValue = getLuminosityValues([(161,161)],1,161,imgName)[0][1]
+        pennySet.append((lumValue,imgName))
+        print pennySet[-1]
+    return pennySet
+
 def runGame(sizeX,sizeY,radius):
     #393x488
     pygameSurfaceX = sizeX
