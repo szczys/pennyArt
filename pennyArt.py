@@ -1,6 +1,7 @@
 import pygame
 import sys
 from math import sqrt
+import pickle
 
 #### Testruns: ####
 
@@ -8,20 +9,17 @@ from math import sqrt
 # mahler2-lowcontrast.jpg runGame(786,976,8)
 # mahler2-cropped.jpg runGame(534,798,8)
 
-#### Calculating Luminance ####
-#http://stackoverflow.com/a/689547
-# first divide R G B by 255, and compute
-# Y = .2126 * R^gamma + .7152 * G^gamma + .0722 * B^gamma
-# assume gamma of 2.2
-
 def luminance(pixelColors):
     #pixelColors will be 3 value tuple
-    gamma = 2.2
-    '''
-    lum = (.2126 * pixelColors[0]) + \
-          (.7152 * pixelColors[1]) + \
-          (.0722 * pixelColors[2])
-    '''
+
+    #### Calculating Luminance ####
+    #http://stackoverflow.com/a/689547
+    # first divide R G B by 255, and compute
+    # Y = .2126 * R^gamma + .7152 * G^gamma + .0722 * B^gamma
+    # assume gamma of 2.2
+    
+    #actually ended up going with this simple equation:
+    #http://stackoverflow.com/a/596243
     
     lum = (.299 * pixelColors[0]) + \
           (.587 * pixelColors[1]) + \
@@ -158,6 +156,12 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png',imgDiameter=324,samp
         pennySet.append((lumValue,imgName))
         print pennySet[-1]
     return pennySet
+
+def picklePennies():
+    #sample all pennies and write output to a file for later use
+    saveSet = samplePennies()
+    pickle.dump( saveSet, open( "pennySet.p", "wb" ) )
+    
 
 def runGame(sizeX,sizeY,radius):
     #393x488
