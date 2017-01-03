@@ -127,6 +127,8 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
         lumAvg = lumSum/len(thisCirclePoints)
         #print point,lumAvg
         lumList.append([point,lumAvg])
+        if len(lumList)%250 == 0:
+            print "Calculated",len(lumList),"values so far..."
         
     ##(utilize scaling to match source resolution)
     #Calculate average luminosity of all harvested points
@@ -163,10 +165,17 @@ def picklePennies():
     pickle.dump( saveSet, open( "pennySet.p", "wb" ) )
     
 
-def runGame(sizeX,sizeY,radius):
+def runGame(sourceImage='mahler2.jpg',radius=8,scalingValue=2):
+    #Parameters:
+    #sourceImage - Image you want to create as a penny mosaic
+    #radius - radius in pixels of each penny area for this image
+    #scalingValue - how much larger should the mock up be than the source image
     #393x488
-    pygameSurfaceX = sizeX
-    pygameSurfaceY = sizeY
+
+    inputImage = pygame.image.load(sourceImage)
+
+    pygameSurfaceX = inputImage.get_rect().size[0]*scalingValue
+    pygameSurfaceY = inputImage.get_rect().size[1]*scalingValue
 
     #horizontal distances should be easy:
     horizontalBisect = radius
@@ -188,6 +197,7 @@ def runGame(sizeX,sizeY,radius):
     screen.fill(red)
 
     #Get a list of all points
+    print "Generating penny locations"
     testPoints = calcVertices(pygameSurfaceX, \
                               pygameSurfaceY, \
                               horizontalBisect, \
@@ -196,9 +206,10 @@ def runGame(sizeX,sizeY,radius):
     #Get pixel data from source image
     #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2.jpg')
     #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2-lowcontrast.jpg')
-    circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2-cropped.jpg')
+    print "Calculating luminance of penny areas"
+    circlesAndLum = getLuminosityValues(testPoints, scalingValue, radius, sourceImage)
     
-    print len(circlesAndLum)
+    print "Total pennies for this mosaic:",len(circlesAndLum)
     for group in circlesAndLum:
         pygame.draw.circle(screen, \
                            (group[1],group[1],group[1]), \
@@ -213,9 +224,11 @@ def runGame(sizeX,sizeY,radius):
     for points in testPoints:
         pygame.draw.circle(screen, blue, points,horizontalBisect)
     '''
-
-
+    
+    print "Saving screenshot."
+    pygame.image.save(screen, "screenshot.jpeg")
     pygame.display.update()
+    
 
     while True:
        for event in pygame.event.get():
