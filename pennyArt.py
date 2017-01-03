@@ -162,8 +162,14 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png',imgDiameter=324,samp
 def picklePennies():
     #sample all pennies and write output to a file for later use
     saveSet = samplePennies()
-    pickle.dump( saveSet, open( "pennySet.p", "wb" ) )
-    
+    with open("pennySet.p","wb") as outfile:
+        pickle.dump(saveSet, outfile)
+
+def unPicklePennies():
+    #read in previously harvested sample set data
+    with open("pennySet.p","rb") as infile:
+        saveSet = pickle.load(infile)
+    return saveSet
 
 def runGame(sourceImage='mahler2.jpg',radius=8,scalingValue=2):
     #Parameters:
@@ -204,8 +210,6 @@ def runGame(sourceImage='mahler2.jpg',radius=8,scalingValue=2):
                               verticalDist)
 
     #Get pixel data from source image
-    #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2.jpg')
-    #circlesAndLum = getLuminosityValues(testPoints, 2, radius, 'mahler2-lowcontrast.jpg')
     print "Calculating luminance of penny areas"
     circlesAndLum = getLuminosityValues(testPoints, scalingValue, radius, sourceImage)
     
