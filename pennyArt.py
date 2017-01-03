@@ -171,7 +171,7 @@ def unPicklePennies():
         saveSet = pickle.load(infile)
     return saveSet
 
-def runGame(sourceImage='mahler2.jpg',radius=8,scalingValue=2):
+def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennies=False):
     #Parameters:
     #sourceImage - Image you want to create as a penny mosaic
     #radius - radius in pixels of each penny area for this image
@@ -214,20 +214,20 @@ def runGame(sourceImage='mahler2.jpg',radius=8,scalingValue=2):
     circlesAndLum = getLuminosityValues(testPoints, scalingValue, radius, sourceImage)
     
     print "Total pennies for this mosaic:",len(circlesAndLum)
-    for group in circlesAndLum:
-        pygame.draw.circle(screen, \
-                           (group[1],group[1],group[1]), \
-                           group[0],
-                           horizontalBisect \
-                           )
 
-    #pygame.draw.lines(screen, blue, True, testPoints, 2)
-
-    '''
-    #this just draws blue circles (was used for testing)
-    for points in testPoints:
-        pygame.draw.circle(screen, blue, points,horizontalBisect)
-    '''
+    if usePennies:
+        img = pygame.image.load('sampleSet/0001-penny.png')
+        img = pygame.transform.scale(img, (64, 64))
+        screen.blit(img,(10,10))
+    else:
+        print "Using greyscale circles (parameter option)" 
+        for group in circlesAndLum:
+            pygame.draw.circle(screen, \
+                               (group[1],group[1],group[1]), \
+                               group[0],
+                               horizontalBisect \
+                               )
+    
     
     print "Saving screenshot."
     pygame.image.save(screen, "screenshot.jpeg")
