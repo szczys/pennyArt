@@ -83,6 +83,9 @@ def camstream():
                     radius += 1
                 elif event.key == pygame.K_MINUS:
                     radius -= 1
+
+                elif event.key == pygame.K_ESCAPE:
+                    capture = False
     camera.stop()
     pygame.quit()
     return
