@@ -2,16 +2,35 @@ import pygame
 import pygame.camera
 import pygame.font
 from PIL import Image, ImageOps, ImageDraw
+import glob
 
 DEVICE = '/dev/video0'
 SIZE = (1280, 720)
 FILENAME = 'capture.png'
+SAMPLEBASENAME = 'sampleSet/{number}-penny.png'
 
 
 #TODO: add settings file for persistent changes in GUI of these values
 OffsetX = 419
 OffsetY = 110
 radius = 180
+
+def getNextSampleFilename():
+    query = glob.glob(SAMPLEBASENAME.format(number="*"))
+    if query == []:
+        return SAMPLEBASENAME.format(number="000001")
+    else:
+        premask = SAMPLEBASENAME.format(number="######")
+        fileNumIdx = len(premask.split("######")[0])
+        highest = 0
+        for fn in query:
+            testVal = int(fn[fileNumIdx:fileNumIdx+6])
+            if  testVal > highest:
+                highest = testVal
+        nextNum = str(highest+1)
+        nextNum = '0'*(6-len(nextNum)) + nextNum
+        return SAMPLEBASENAME.format(number=nextNum)
+        
 
 def makeCircleMask():
     #Tricks to make everything but penny transparent using mask:
