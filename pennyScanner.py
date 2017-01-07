@@ -7,6 +7,7 @@ import glob
 DEVICE = '/dev/video0'
 SIZE = (1280, 720)
 FILENAME = 'capture.png'
+#Sample basenames must have {number} in them and use 6-digit number in the scheme
 SAMPLEBASENAME = 'sampleSet/{number}-penny.png'
 
 
@@ -16,21 +17,35 @@ OffsetY = 110
 radius = 180
 
 def getNextSampleFilename():
+    #This will be called once and will find the highest
+    #existing sample number and increment it by 1.
+    #It will work even if there are some samples missing
     query = glob.glob(SAMPLEBASENAME.format(number="*"))
     if query == []:
         return SAMPLEBASENAME.format(number="000001")
     else:
-        premask = SAMPLEBASENAME.format(number="######")
-        fileNumIdx = len(premask.split("######")[0])
+        fileNumIdx = getFileNumIdx()
         highest = 0
         for fn in query:
             testVal = int(fn[fileNumIdx:fileNumIdx+6])
             if  testVal > highest:
                 highest = testVal
-        nextNum = str(highest+1)
-        nextNum = '0'*(6-len(nextNum)) + nextNum
-        return SAMPLEBASENAME.format(number=nextNum)
-        
+        return makeSampleFilename(highest+1)
+
+def getFileNumIdx():
+    premask = SAMPLEBASENAME.format(number="######")
+    fileNumIdx = len(premask.split("######")[0])
+    return fileNumIdx
+
+def makeSampleFilename(num):
+    nextNum = str(num)
+    nextNum = '0'*(6-len(nextNum)) + nextNum
+    return SAMPLEBASENAME.format(number=nextNum)
+
+def incrementFilename(curFn):
+    fileNumIdx = getFileNumIdx()
+    highest = int(curFn[fileNumIdx:fileNumIdx+6])+1
+    return makeSampleFilename(highest)   
 
 def makeCircleMask():
     #Tricks to make everything but penny transparent using mask:
