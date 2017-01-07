@@ -6,6 +6,8 @@ DEVICE = '/dev/video0'
 SIZE = (1280, 720)
 FILENAME = 'capture.png'
 
+
+#TODO: add settings file for persistent changes in GUI of these values
 OffsetX = 419
 OffsetY = 110
 radius = 180
@@ -35,6 +37,9 @@ def camstream():
     mask = makeCircleMask()
     
     while capture:
+        global OffsetX
+        global OffsetY
+        global radius
         screen = camera.get_image(screen)
         pygame.draw.circle(screen,(0,255,0),(OffsetX+radius,OffsetY+radius),radius+6,6)
         display.blit(screen, (0,0))
@@ -58,6 +63,18 @@ def camstream():
                     
                 elif event.key == pygame.K_SPACE:
                     print "Spacebar"
+                elif event.key == pygame.K_LEFT:
+                    OffsetX -= 1
+                elif event.key == pygame.K_RIGHT:
+                    OffsetX += 1
+                elif event.key == pygame.K_UP:
+                    OffsetY -= 1
+                elif event.key == pygame.K_DOWN:
+                    OffsetY += 1
+                elif event.key == pygame.K_PLUS:
+                    radius += 1
+                elif event.key == pygame.K_MINUS:
+                    radius -= 1
     camera.stop()
     pygame.quit()
     return
