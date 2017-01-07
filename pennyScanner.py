@@ -1,5 +1,6 @@
 import pygame
 import pygame.camera
+import pygame.font
 from PIL import Image, ImageOps, ImageDraw
 
 DEVICE = '/dev/video0'
@@ -31,8 +32,12 @@ def camstream():
     camera = pygame.camera.Camera(DEVICE, SIZE)
     camera.start()
     screen = pygame.surface.Surface(SIZE, 0, display)
-    capture = True
 
+    pygame.font.init()
+    myfont = pygame.font.SysFont("monospace", 96)
+
+    capture = True
+    lastLum = 255
     #get image for masking out the penny
     mask = makeCircleMask()
     
@@ -42,6 +47,9 @@ def camstream():
         global radius
         screen = camera.get_image(screen)
         pygame.draw.circle(screen,(0,255,0),(OffsetX+radius,OffsetY+radius),radius+6,6)
+        pygame.draw.rect(screen, (255,255,255), (30,30,180,80), 0)
+        displayLastLum = myfont.render(str(lastLum), 1, (0,0,0))
+        screen.blit(displayLastLum,(35, 22))
         display.blit(screen, (0,0))
 
         pygame.display.flip()
