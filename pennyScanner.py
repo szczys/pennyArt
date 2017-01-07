@@ -57,7 +57,7 @@ def camstream():
             if event.type == pygame.QUIT:
                 capture = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_SPACE:
                     screen = camera.get_image(screen)
                     display.blit(screen, (0,0))
                     pygame.image.save(screen, FILENAME)
@@ -69,8 +69,6 @@ def camstream():
                     output.putalpha(mask)
                     output.save('capture2.png')
                     
-                elif event.key == pygame.K_SPACE:
-                    print "Spacebar"
                 elif event.key == pygame.K_LEFT:
                     OffsetX -= 1
                 elif event.key == pygame.K_RIGHT:
