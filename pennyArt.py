@@ -14,6 +14,20 @@ valueSet = {35: 'sampleSet/000032-penny.png', 36: 'sampleSet/000033-penny.png', 
 # mahler2-lowcontrast.jpg runGame(786,976,8)
 # mahler2-cropped.jpg runGame(534,798,8)
 
+def tm():
+    from time import time
+    for key in valueSet.keys():
+        pixel = getPixelArray(valueSet[key])
+        x = len(pixel)/2
+        r = x
+        if r%2 == 0:
+            r -= 1
+        y = getAllPointsInCircle(x,x,r)
+        t0 = time()
+        z= getCircleAverageLuminosity(pixel,y)
+        t1 = time()
+        print key,z,t1-t0
+
 def getPixelLuminance(pixelColors):
     #pixelColors will be 3 value tuple
 
@@ -147,16 +161,16 @@ def getCircleAverageLuminosity(pixArray, pixelsToTest, offsets=(0,0)):
     #offsets are so you can use the same pixelsToTest array and move it around
     #a larger image if necessary.
     pixelAverages = [0,0,0]
+    #moved to averaging colors then calculating luminance (~6.9x speedup).
+    #possible loss of precision? But I think it is still valid. 
     for point in pixelsToTest:
         thisPixel = pixArray[point[0]+offsets[0], point[1]+offsets[1]]
         pixelAverages[0] += thisPixel[0]
         pixelAverages[1] += thisPixel[1]
         pixelAverages[2] += thisPixel[2]
-    print pixelAverages
     pixelAverages[0] = pixelAverages[0]/len(pixelsToTest)
     pixelAverages[1] = pixelAverages[1]/len(pixelsToTest)
     pixelAverages[2] = pixelAverages[2]/len(pixelsToTest)
-    print pixelAverages
     pixelLum = getPixelLuminance(pixelAverages)
     return pixelLum
 
@@ -164,7 +178,7 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
     #process the penny sample set to characterize their luminance values
     #returns list of tuples: (luminance value, image name)
 
-    #default image names look like: 'sampleSet/0001-penny.png'
+    #default image names look like: 'sampleSet/000001-penny.png'
     #images should be square with penning spanning edge to edge
     #this will automatically poll largest circular area in the image
 
