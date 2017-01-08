@@ -64,6 +64,8 @@ def calcMapValues(value, MapData, pennySet, maxDeviation=1):
 
 def mapTest(deviation=1):
     #Sanity checking calcMapValues()
+    #Returns number of values not mappable.
+    #Increase deviation to decrease the unmappable values
     a = unPicklePennies()
     missing = set([])
     for i in mosaicData:
@@ -331,24 +333,24 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     if usePennies:
         pennyImages = unPicklePennies()
         
-        #TODO: Normalize the spans of lightness
-
-        #FIXME: this is faked, needs more thought
+        uniqueInputLums = {}
         for group in circlesAndLum:
-            testLum = group[1]-65 #lum is group[1]
-            loopFlag = True
-            while loopFlag:
-                #TODO: test statement to iterate to correct penny
-                if testLum in valueSet.keys():
-                    loopFlag = False
-                else:
-                    testLum += 1
-                if testLum > 156:
-                    testLum = 156
-                    loopFlag = False
-            
-            
-            img = pygame.image.load(valueSet[testLum])
+            uniqueInputLums[group[1]] = []
+        for lum in uniqueInputLums.keys():
+            #Fixme: figure out how to set deviation (min value of 5 was predetermined for testing)
+            mappedValues = calcMapValues(lum, \
+                                         getMapData(mosaicData, pennyImages), \
+                                         pennyImages, \
+                                         maxDeviation=5 \
+                                         )
+            uniqueInputLums[lum] = mappedValues
+        
+        #TODO: Normalize the spans of lightness (easiest would be randomize the order in which circle areas are assigned
+
+        #FIXME: need to remove pennies as they're used but currently sample set is so small this is not possible
+        for group in circlesAndLum:
+            lum = group[1]
+            img = pygame.image.load(pennyImages[uniqueInputLums[lum][0]][0])
             img = pygame.transform.scale(img, (radius*2, radius*2))
             screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
     else:
