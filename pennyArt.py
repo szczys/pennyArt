@@ -235,10 +235,6 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     black = (0,0,0)
     pink = (255,200,200)
 
-    pygame.init()
-    screen = pygame.display.set_mode((pygameSurfaceX,pygameSurfaceY))
-    screen.fill((187,136,85))
-
     #Get a list of all points
     print "Generating penny locations"
     testPoints = calcVertices(pygameSurfaceX, \
@@ -252,6 +248,11 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     
     print "Total pennies for this mosaic:",len(circlesAndLum)
 
+    #Show how it's going to look!
+    pygame.init()
+    screen = pygame.display.set_mode((pygameSurfaceX,pygameSurfaceY))
+    screen.fill((187,136,85))
+    
     if usePennies:
         pennyImages = unPicklePennies()
         
