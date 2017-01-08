@@ -12,7 +12,13 @@ from math import sqrt
 import pickle
 import glob
 
+#Global variable to help with testing (populated by runGame()
 mosaicData = []
+
+#triagePennies variable will repeat penny use if False.
+#this is useful if you have a small penny set and just want
+#a preview using repeating images
+triagePennies = False
 
 def getMapData(mosaicSet, pennySet):
 
@@ -260,22 +266,36 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
     #this will automatically poll largest circular area in the image
 
     sampleFileList = glob.glob(baseName.format(number="*"))
-    circlePointSets = []
+    circlePointSets = {}
     
     pennySet = {}
+    count = 1
+    print "Characterizing ", len(sampleFileList), "pennies..."
     for sample in sampleFileList:
-        #assume sample is square, use height to get values we need
-        img = pygame.image.load(sample)
-        radius = img.get_height()/2
-        if radius%2 == 0:
-            radius -= 1
-        lumValue = getLuminosityValues([(radius,radius)],1,radius,sample)[0][1]
+        if count%25 == 0:
+            print 'Characterization Progress:', count, 'of', len(sampleFileList), 'pennies.'
+        count += 1
 
+        #assume sample is square, use height to get values we need
+        pixels = getPixelArray(sample)
+        
+        centerX = len(pixels)/2
+        r = centerX
+        if r%2 == 0:
+            r -= 1
+            
+        if len(pixels) not in circlePointSets.keys():
+            circlePointSets[len(pixels)] = getAllPointsInCircle(centerX,centerX,r)
+        
+        #lumValue = getLuminosityValues([(radius,radius)],1,radius,sample)[0][1]
+        lumValue = getCircleAverageLuminosity(pixels, circlePointSets[len(pixels)])
+        
         if lumValue not in pennySet.keys():
             pennySet[lumValue] = [sample]
         else:
             pennySet[lumValue].append(sample)
-        #print pennySet[lumValue]
+    print "Done!"
+    print
     return pennySet
 
 def picklePennies():
@@ -289,6 +309,8 @@ def unPicklePennies():
     with open("pennySet.p","rb") as infile:
         saveSet = pickle.load(infile)
     return saveSet
+
+
 
 def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennies=False):
     from time import time
@@ -356,11 +378,38 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
         #TODO: Normalize the spans of lightness (easiest would be randomize the order in which circle areas are assigned
 
         #FIXME: need to remove pennies as they're used but currently sample set is so small this is not possible
+        usedPennyCount = 0
+        missingPennyCount = 0
         for group in circlesAndLum:
-            lum = group[1]
-            img = pygame.image.load(pennyImages[uniqueInputLums[lum][0]][0])
-            img = pygame.transform.scale(img, (radius*2, radius*2))
-            screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
+            if triagePennies:
+                nextPenny = ''
+                lum = group[1]
+                for i in uniqueInputLums[lum]:
+                    if len(pennyImages[i]):
+                        print "popping:",i,pennyImages[i]
+                        nextPenny = pennyImages[i].pop()
+                        break
+                if nextPenny:
+                    usedPennyCount += 1
+                    
+                    img = pygame.image.load(nextPenny)
+                    img = pygame.transform.scale(img, (radius*2, radius*2))
+                    screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
+                else:
+                    missingPennyCount += 1
+                    pygame.draw.circle(screen, \
+                                   (group[1],group[1],group[1]), \
+                                   group[0],
+                                   horizontalBisect \
+                                   )
+            else:
+                lum = group[1]
+                img = pygame.image.load(pennyImages[uniqueInputLums[lum][0]][0])
+                img = pygame.transform.scale(img, (radius*2, radius*2))
+                screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
+        if triagePennies:
+            print "Pennies Used:",usedPennyCount
+            print "Pennies Still Needed:",missingPennyCount
     else:
         print "Using greyscale circles (parameter option)" 
         for group in circlesAndLum:
