@@ -11,7 +11,11 @@ import pygame.camera
 import pygame.font
 from PIL import Image, ImageOps, ImageDraw
 import glob
-from pennyArt import getCircleAverageLuminosity, getAllPointsInCircle, unPicklePennies
+from pennyArt import \
+     getCircleAverageLuminosity, \
+     getAllPointsInCircle, \
+     unPicklePennies, \
+     pickleHelper
 
 DEVICE = '/dev/video1'
 SIZE = (1280, 720)
@@ -99,6 +103,8 @@ def camstream():
     mask = makeCircleMask()
 
     nextFilename = getNextSampleFilename()
+
+    pennySet = unPicklePennies()
     
     while capture:
         global OffsetX
@@ -132,7 +138,13 @@ def camstream():
                     output.save(nextFilename)
                     #Characterize this:
                     lastLum = characterizePenny(nextFilename)
-                    
+                    #Add to pennySet:
+                    if lastLum in pennySet.keys():
+                        pennySet[lastLum].append(nextFilename)
+                    else:
+                        pennySet[lastLum] = [nextFilename]
+
+                    #Increment filename for next time
                     nextFilename = incrementFilename(nextFilename)
                     
                 elif event.key == pygame.K_LEFT:
@@ -157,6 +169,25 @@ def camstream():
                 elif event.key == pygame.K_ESCAPE:
                     capture = False
     camera.stop()
+    pygame.draw.rect(screen, (255,0,0), (340,210,600,300), 0)
+    saveModal = myfont.render("Save Penny", 1, (255,255,255))
+    saveModal2 = myfont.render("Data? y/n", 1, (255,255,255))
+    screen.blit(saveModal,(360, 230))
+    screen.blit(saveModal2,(360, 360))
+    display.blit(screen, (0,0))
+    pygame.display.flip()
+    loopFlag = True
+    while loopFlag:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT or \
+               (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                 loopFlag = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_y:
+                    pickleHelper('pennySet.p',pennySet) 
+                    loopFlag = False
+                elif event.key == pygame.K_n:
+                    loopFlag = False
     pygame.quit()
     return
 
