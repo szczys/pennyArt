@@ -146,12 +146,19 @@ def getCircleAverageLuminosity(pixArray, pixelsToTest, offsets=(0,0)):
     #pixelsToTest are a circular area of points (x,y)
     #offsets are so you can use the same pixelsToTest array and move it around
     #a larger image if necessary.
-    lumSum = 0
+    pixelAverages = [0,0,0]
     for point in pixelsToTest:
-        pixelLum = getPixelLuminance(
-            pixArray[point[0]+offsets[0], point[1]+offsets[1]])
-        lumSum += pixelLum       
-    return lumSum/len(pixelsToTest)
+        thisPixel = pixArray[point[0]+offsets[0], point[1]+offsets[1]]
+        pixelAverages[0] += thisPixel[0]
+        pixelAverages[1] += thisPixel[1]
+        pixelAverages[2] += thisPixel[2]
+    print pixelAverages
+    pixelAverages[0] = pixelAverages[0]/len(pixelsToTest)
+    pixelAverages[1] = pixelAverages[1]/len(pixelsToTest)
+    pixelAverages[2] = pixelAverages[2]/len(pixelsToTest)
+    print pixelAverages
+    pixelLum = getPixelLuminance(pixelAverages)
+    return pixelLum
 
 def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
     #process the penny sample set to characterize their luminance values
