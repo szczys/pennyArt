@@ -74,6 +74,8 @@ def camstream():
     lastLum = 255
     #get image for masking out the penny
     mask = makeCircleMask()
+
+    nextFilename = getNextSampleFilename()
     
     while capture:
         global OffsetX
@@ -101,7 +103,8 @@ def camstream():
                     #Do some magic to keep just a circle (the penny)
                     output = ImageOps.fit(img2, mask.size, centering=(0.5, 0.5))
                     output.putalpha(mask)
-                    output.save('capture2.png')
+                    output.save(nextFilename)
+                    nextFilename = incrementFilename(nextFilename)
                     
                 elif event.key == pygame.K_LEFT:
                     OffsetX -= 1
