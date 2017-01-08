@@ -126,36 +126,30 @@ def getPixelArray(filename):
 def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceImage):
     #scaling value is how much to divide the
     #xy values by to fit within source image resolution
-
     lumList = []
     
     #Get pixel data from source image
     pixels = getPixelArray(sourceImage)
     #print pixels.shape
 
+    adjustedR = radiusBeforeScaling/scalingValue
+    testPoints = getAllPointsInCircle(adjustedR, adjustedR, adjustedR)
+
     #iterate each point in listOfPoints
     for point in listOfPoints:
         #get list of points in circle around each point
-        thisCirclePoints = getAllPointsInCircle(point[0]/scalingValue, \
-                             point[1]/scalingValue, \
-                             radiusBeforeScaling/scalingValue \
-                             )
-        lumSum = 0
-        '''
-        for circlePoint in thisCirclePoints:
-            lumSum += getPixelLuminance(pixels[circlePoint[0]][circlePoint[1]])
-        lumAvg = lumSum/len(thisCirclePoints)
-        '''
-        lumAvg = getCircleAverageLuminosity(pixels,thisCirclePoints)
-        #print point,lumAvg
+        testOffsetX = (point[0]/scalingValue)-adjustedR
+        testOffsetY = (point[1]/scalingValue)-adjustedR
+
+        lumAvg = getCircleAverageLuminosity( \
+            pixels, \
+            testPoints, \
+            (testOffsetX, testOffsetY) \
+            )
         lumList.append([point,lumAvg])
         if len(lumList)%250 == 0:
             print "Calculated",len(lumList),"values so far..."
-        
-    ##(utilize scaling to match source resolution)
-    #Calculate average luminosity of all harvested points
-    #associate this value with the xy inputs
-    
+
     return lumList
 
 def getCircleAverageLuminosity(pixArray, pixelsToTest, offsets=(0,0)):
