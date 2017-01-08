@@ -219,7 +219,7 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
     sampleFileList = glob.glob(baseName.format(number="*"))
     circlePointSets = []
     
-    pennySet = []
+    pennySet = {}
     for sample in sampleFileList:
         #assume sample is square, use height to get values we need
         img = pygame.image.load(sample)
@@ -227,8 +227,12 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
         if radius%2 == 0:
             radius -= 1
         lumValue = getLuminosityValues([(radius,radius)],1,radius,sample)[0][1]
-        pennySet.append((lumValue,sample))
-        print pennySet[-1]
+
+        if lumValue not in pennySet.keys():
+            pennySet[lumValue] = [sample]
+        else:
+            pennySet[lumValue].append(sample)
+        #print pennySet[lumValue]
     return pennySet
 
 def picklePennies():
