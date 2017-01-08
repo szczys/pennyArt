@@ -18,7 +18,7 @@ mosaicData = []
 #triagePennies variable will repeat penny use if False.
 #this is useful if you have a small penny set and just want
 #a preview using repeating images
-triagePennies = False
+triagePennies = True
 
 def getMapData(mosaicSet, pennySet):
 
@@ -301,16 +301,23 @@ def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
 def picklePennies():
     #sample all pennies and write output to a file for later use
     saveSet = samplePennies()
-    with open("pennySet.p","wb") as outfile:
-        pickle.dump(saveSet, outfile)
+    pickleHelper("pennySet.p",saveSet)
 
 def unPicklePennies():
     #read in previously harvested sample set data
-    with open("pennySet.p","rb") as infile:
+    return unPickleHelper("pennySet.p")
+
+def unPicklePaintByNumber():
+    return unPickleHelper("paintByNumber.p")
+
+def pickleHelper(fn, data):
+    with open(fn,"wb") as outfile:
+        pickle.dump(data, outfile)
+
+def unPickleHelper(fn):
+    with open(fn,"rb") as infile:
         saveSet = pickle.load(infile)
     return saveSet
-
-
 
 def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennies=False):
     from time import time
@@ -377,17 +384,17 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
         
         #TODO: Normalize the spans of lightness (easiest would be randomize the order in which circle areas are assigned
 
-        #FIXME: need to remove pennies as they're used but currently sample set is so small this is not possible
         usedPennyCount = 0
         missingPennyCount = 0
+        paintByNumber = []
         for group in circlesAndLum:
             if triagePennies:
                 nextPenny = ''
                 lum = group[1]
                 for i in uniqueInputLums[lum]:
                     if len(pennyImages[i]):
-                        print "popping:",i,pennyImages[i]
                         nextPenny = pennyImages[i].pop()
+                        paintByNumber.append((group[0],i))
                         break
                 if nextPenny:
                     usedPennyCount += 1
@@ -410,6 +417,11 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
         if triagePennies:
             print "Pennies Used:",usedPennyCount
             print "Pennies Still Needed:",missingPennyCount
+            print
+            print "Writing penny location info to paintByNumber.p"
+            with open("paintByNumber.p","wb") as outfile:
+                pickle.dump(paintByNumber, outfile)
+            print "Done"
     else:
         print "Using greyscale circles (parameter option)" 
         for group in circlesAndLum:
