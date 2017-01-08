@@ -4,6 +4,43 @@ from math import sqrt
 import pickle
 import glob
 
+mosaicData = []
+
+def getMapData(mosaicSet, pennySet):
+
+    mosaicLow= 255
+    mosaicHigh= 0
+    pennyLow= 255
+    pennyHigh= 0
+
+    for i in mosaicSet:
+        if i[1] < mosaicLow:
+            mosaicLow = i[1]
+        if i[1] > mosaicHigh:
+            mosaicHigh = i[1]
+
+    for i in pennySet:
+        if i[0] < pennyLow:
+            pennyLow = i[0]
+        if i[0] > pennyHigh:
+            pennyHigh = i[0]
+
+    mosaicSpan = mosaicHigh - mosaicLow
+    pennySpan = pennyHigh - pennyLow
+
+    steps = pennySpan/float(mosaicSpan)
+
+    return (steps, mosaicLow, pennyLow, pennyHigh)
+
+def calcMapValue(value, MapData, pennySet):
+    steps = MapData[0]
+    mosaicLow = MapData[1]
+    pennyLow = MapData[2]
+    pennyHigh = MapData[3]
+
+    increment = int((value-mosaicLow)*steps)
+    return pennyLow+increment
+
 ##This dict is a hack for testing
 valueSet = {35: 'sampleSet/000032-penny.png', 36: 'sampleSet/000033-penny.png', 43: 'sampleSet/000031-penny.png', 44: 'sampleSet/000012-penny.png', 45: 'sampleSet/000030-penny.png', 49: 'sampleSet/000029-penny.png', 50: 'sampleSet/000035-penny.png', 51: 'sampleSet/000018-penny.png', 54: 'sampleSet/000014-penny.png', 55: 'sampleSet/000011-penny.png', 57: 'sampleSet/000051-penny.png', 58: 'sampleSet/000017-penny.png', 59: 'sampleSet/000010-penny.png', 60: 'sampleSet/000034-penny.png', 62: 'sampleSet/000050-penny.png', 64: 'sampleSet/000054-penny.png', 65: 'sampleSet/000026-penny.png', 66: 'sampleSet/000028-penny.png', 68: 'sampleSet/000027-penny.png', 71: 'sampleSet/000057-penny.png', 72: 'sampleSet/000016-penny.png', 73: 'sampleSet/000038-penny.png', 74: 'sampleSet/000008-penny.png', 75: 'sampleSet/000040-penny.png', 77: 'sampleSet/000061-penny.png', 78: 'sampleSet/000060-penny.png', 79: 'sampleSet/000005-penny.png', 86: 'sampleSet/000042-penny.png', 89: 'sampleSet/000009-penny.png', 94: 'sampleSet/000022-penny.png', 97: 'sampleSet/000006-penny.png', 99: 'sampleSet/000049-penny.png', 100: 'sampleSet/000041-penny.png', 103: 'sampleSet/000046-penny.png', 106: 'sampleSet/000020-penny.png', 107: 'sampleSet/000058-penny.png', 109: 'sampleSet/000047-penny.png', 114: 'sampleSet/000024-penny.png', 115: 'sampleSet/000059-penny.png', 117: 'sampleSet/000043-penny.png', 126: 'sampleSet/000001-penny.png', 129: 'sampleSet/000021-penny.png', 134: 'sampleSet/000023-penny.png', 138: 'sampleSet/000056-penny.png', 148: 'sampleSet/000055-penny.png', 156: 'sampleSet/000045-penny.png'}
 ##end testing hack
@@ -245,7 +282,8 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     #Get pixel data from source image
     print "Calculating luminance of penny areas"
     circlesAndLum = getLuminosityValues(testPoints, scalingValue, radius, sourceImage)
-    
+    global mosaicData
+    mosaicData = circlesAndLum
     print "Total pennies for this mosaic:",len(circlesAndLum)
 
     #Show how it's going to look!
