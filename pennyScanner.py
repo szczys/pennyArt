@@ -12,7 +12,7 @@ import pygame.font
 from PIL import Image, ImageOps, ImageDraw
 import glob
 
-DEVICE = '/dev/video0'
+DEVICE = '/dev/video1'
 SIZE = (1280, 720)
 FILENAME = 'capture.png'
 #Sample basenames must have {number} in them and use 6-digit number in the scheme
