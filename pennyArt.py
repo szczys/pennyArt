@@ -14,7 +14,7 @@ valueSet = {35: 'sampleSet/000032-penny.png', 36: 'sampleSet/000033-penny.png', 
 # mahler2-lowcontrast.jpg runGame(786,976,8)
 # mahler2-cropped.jpg runGame(534,798,8)
 
-def luminance(pixelColors):
+def getPixelLuminance(pixelColors):
     #pixelColors will be 3 value tuple
 
     #### Calculating Luminance ####
@@ -128,7 +128,7 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
                              )
         lumSum = 0
         for circlePoint in thisCirclePoints:
-            lumSum += luminance(pixels[circlePoint[0]][circlePoint[1]])
+            lumSum += getPixelLuminance(pixels[circlePoint[0]][circlePoint[1]])
         lumAvg = lumSum/len(thisCirclePoints)
         #print point,lumAvg
         lumList.append([point,lumAvg])
@@ -140,6 +140,9 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
     #associate this value with the xy inputs
     
     return lumList
+
+def getCircleAverageLuminosity():
+    return True
 
 def samplePennies(baseName = 'sampleSet/{number}-penny.png'):
     #process the penny sample set to characterize their luminance values
@@ -260,8 +263,9 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     loopFlag = True
     while loopFlag:
        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                 pygame.quit()
+            if event.type == pygame.QUIT or \
+               (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                  loopFlag = False
 
+    pygame.quit()
     return circlesAndLum
