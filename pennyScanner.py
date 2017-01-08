@@ -1,3 +1,11 @@
+'''******************************
+* Penny Mosaic Generator        *
+* MIT License               	*
+* Copyright 2017 - Mike Szczys  *
+* http://jumptuck.com 	    	*
+*				*
+******************************'''
+
 import pygame
 import pygame.camera
 import pygame.font
