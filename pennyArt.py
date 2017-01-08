@@ -141,9 +141,12 @@ def getLuminosityValues(listOfPoints, scalingValue, radiusBeforeScaling, sourceI
                              radiusBeforeScaling/scalingValue \
                              )
         lumSum = 0
+        '''
         for circlePoint in thisCirclePoints:
             lumSum += getPixelLuminance(pixels[circlePoint[0]][circlePoint[1]])
         lumAvg = lumSum/len(thisCirclePoints)
+        '''
+        lumAvg = getCircleAverageLuminosity(pixels,thisCirclePoints)
         #print point,lumAvg
         lumList.append([point,lumAvg])
         if len(lumList)%250 == 0:
@@ -210,6 +213,8 @@ def unPicklePennies():
     return saveSet
 
 def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennies=False):
+    from time import time
+    t0 = time()
     #Parameters:
     #sourceImage - Image you want to create as a penny mosaic
     #radius - radius in pixels of each penny area for this image
@@ -287,6 +292,8 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     
     
     print "Saving screenshot."
+    t1 = time()
+    print t1-t0
     pygame.image.save(screen, "screenshot.jpeg")
     pygame.display.update()
     
@@ -298,4 +305,4 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
                  loopFlag = False
 
     pygame.quit()
-    return circlesAndLum
+    #return circlesAndLum
