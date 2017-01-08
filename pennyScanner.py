@@ -11,6 +11,7 @@ import pygame.camera
 import pygame.font
 from PIL import Image, ImageOps, ImageDraw
 import glob
+from pennyArt import getCircleAverageLuminosity, getAllPointsInCircle, unPicklePennies
 
 DEVICE = '/dev/video1'
 SIZE = (1280, 720)
@@ -20,9 +21,12 @@ SAMPLEBASENAME = 'sampleSet/{number}-penny.png'
 
 
 #TODO: add settings file for persistent changes in GUI of these values
-OffsetX = 419
-OffsetY = 110
+OffsetX = 411
+OffsetY = 106
 radius = 180
+
+#speedup for finding circle points (do it once for each sample size):
+circlePointsSet = {}
 
 def getNextSampleFilename():
     #This will be called once and will find the highest
@@ -64,6 +68,17 @@ def makeCircleMask():
     draw.ellipse((0,0)+size, fill=255)
     return mask
 
+def characterizePenny(fn):
+    global circlePointsSet
+    pixels = pygame.surfarray.array3d(pygame.image.load(fn))
+    if len(pixels) not in circlePointsSet.keys():
+        centerX = len(pixels)/2
+        r = centerX
+        if r%2 == 0:
+            r -= 1
+    circlePointsSet[len(pixels)] = getAllPointsInCircle(centerX, centerX, r)
+    lum = getCircleAverageLuminosity(pixels, circlePointsSet[len(pixels)])
+    return lum
 
 def camstream():
     #pygame camera code is by snim2 found here:
@@ -97,13 +112,16 @@ def camstream():
         display.blit(screen, (0,0))
 
         pygame.display.flip()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 capture = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     screen = camera.get_image(screen)
+                    pygame.draw.rect(screen, (255,0,0), (30,30,180,80), 0)
                     display.blit(screen, (0,0))
+                    pygame.display.flip()
                     pygame.image.save(screen, FILENAME)
                     img = Image.open(FILENAME)
                     #Crop to Square
@@ -112,20 +130,29 @@ def camstream():
                     output = ImageOps.fit(img2, mask.size, centering=(0.5, 0.5))
                     output.putalpha(mask)
                     output.save(nextFilename)
+                    #Characterize this:
+                    lastLum = characterizePenny(nextFilename)
+                    
                     nextFilename = incrementFilename(nextFilename)
                     
                 elif event.key == pygame.K_LEFT:
                     OffsetX -= 1
+                    print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_RIGHT:
                     OffsetX += 1
+                    print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_UP:
                     OffsetY -= 1
+                    print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_DOWN:
                     OffsetY += 1
+                    print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_PLUS:
                     radius += 1
+                    print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_MINUS:
                     radius -= 1
+                    print OffsetX,OffsetY,radius
 
                 elif event.key == pygame.K_ESCAPE:
                     capture = False
