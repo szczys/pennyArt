@@ -315,8 +315,11 @@ def pickleHelper(fn, data):
         pickle.dump(data, outfile)
 
 def unPickleHelper(fn):
-    with open(fn,"rb") as infile:
-        saveSet = pickle.load(infile)
+    try:
+        with open(fn,"rb") as infile:
+            saveSet = pickle.load(infile)
+    except:
+        saveSet = {}
     return saveSet
 
 def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennies=False):
