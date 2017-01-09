@@ -159,7 +159,7 @@ def camstream():
                 elif event.key == pygame.K_DOWN:
                     OffsetY += 1
                     print OffsetX,OffsetY,radius
-                elif event.key == pygame.K_PLUS:
+                elif event.key == pygame.K_EQUALS:
                     radius += 1
                     print OffsetX,OffsetY,radius
                 elif event.key == pygame.K_MINUS:
