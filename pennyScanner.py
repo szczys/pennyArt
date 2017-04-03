@@ -80,7 +80,7 @@ def characterizePenny(fn):
         r = centerX
         if r%2 == 0:
             r -= 1
-    circlePointsSet[len(pixels)] = getAllPointsInCircle(centerX, centerX, r)
+        circlePointsSet[len(pixels)] = getAllPointsInCircle(centerX, centerX, r)
     lum = getCircleAverageLuminosity(pixels, circlePointsSet[len(pixels)])
     return lum
 

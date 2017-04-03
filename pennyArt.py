@@ -18,7 +18,7 @@ mosaicData = []
 #triagePennies variable will repeat penny use if False.
 #this is useful if you have a small penny set and just want
 #a preview using repeating images
-triagePennies = True
+triagePennies = False
 
 def getMapData(mosaicSet, pennySet):
 
@@ -381,7 +381,7 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
             mappedValues = calcMapValues(lum, \
                                          getMapData(mosaicData, pennyImages), \
                                          pennyImages, \
-                                         maxDeviation=5 \
+                                         maxDeviation=10 \
                                          )
             uniqueInputLums[lum] = mappedValues
         
@@ -414,6 +414,7 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
                                    )
             else:
                 lum = group[1]
+                print lum
                 img = pygame.image.load(pennyImages[uniqueInputLums[lum][0]][0])
                 img = pygame.transform.scale(img, (radius*2, radius*2))
                 screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
