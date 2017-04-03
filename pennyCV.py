@@ -11,22 +11,21 @@ PENNYSAMPLEWIDTH = 200
 
 #infile = "reduced.jpg"
 #infile = "/home/mike/Desktop/pennySample.pnm"
-infile = "gscan-sample.jpg"
+#infile = "gscan-sample.jpg"
 
 circles = []
-postViewing = Image.open(infile)
 
-def genAndSavePennySamples():
-    findPennies()
+def genAndSavePennySamples(scanFilename):
+    findPennies(scanFilename)
     nextFilename = getNextSampleFilename();
     for p in range(len(circles)):
-        savePenny(p, nextFilename)
+        savePenny(scanFilename, p, nextFilename)
         nextFilename = incrementFilename(nextFilename)
     
 
-def findPennies():
+def findPennies(fn):
     global circles
-    image = cv2.imread(infile)
+    image = cv2.imread(fn)
 
     output = image.copy()
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -46,10 +45,11 @@ def findPennies():
         cv2.waitKey(2000) #& 0xFF #The bitwise and is a hack for 64-bit machines
         '''
 
-def savePenny(num, fn):
+def savePenny(scanFilename, num, fn):
     if len(circles) == 0:
         print "No pennies in the circles array."
         return
+    postViewing = Image.open(scanFilename)
     x,y,r = circles[num]
     crop_rectangle = (x-r,y-r, x+r,y+r)
     cropped_im = postViewing.crop(crop_rectangle)
