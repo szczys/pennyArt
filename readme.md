@@ -3,6 +3,14 @@ Penny Mosaic Generator
 
 This project takes an input image and turns it into a penny mosaice. Pennies are characterized using a webcam and a jig. An image of each penny is saved and can be used to show a graphic representation of what an actual build will look like.
 
+Grab pennies from a scanner with OpenCV
+---------------------------------------
+
+```scanimage --resolution 300 --mode Color > scannerPennies.pnm```
+
+from pennyCV.py run:
+```genAndSavePennySamples(scannerPennies.pnm)```
+
 Usage
 -----
 
