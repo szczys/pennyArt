@@ -37,6 +37,12 @@ v4l2-ctl -d /dev/video1 -c exposure_auto=1
 
 Just be sure to set these values back when done scanning.
 
+OpenCV for Python
+=================
+If you get a message that the cv2 library is not found, run this (Ubuntu):
+```sudo apt-get install python-opencv```
+
+
 License
 =======
 
