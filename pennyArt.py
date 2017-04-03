@@ -17,6 +17,7 @@ from pennyCharacterizer import \
 	getLuminosityValues, \
 	getCircleAverageLuminosity, \
 	getAllPointsInCircle
+from random import randrange
 
 #Global variable to help with testing (populated by runGame()
 mosaicData = []
@@ -278,7 +279,13 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
                                    )
             else:
                 lum = group[1]
-                img = pygame.image.load(pennyImages[uniqueInputLums[lum][0]][0])
+                thisGroup = uniqueInputLums[lum][0]
+                randFromGroup = 0
+                if len(pennyImages[thisGroup]) > 1:
+					randFromGroup = randrange(0,len(pennyImages[thisGroup]))
+                
+                
+                img = pygame.image.load(pennyImages[thisGroup][randFromGroup])
                 img = pygame.transform.scale(img, (radius*2, radius*2))
                 screen.blit(img,(group[0][0]-radius,group[0][1]-radius))
         if triagePennies:
