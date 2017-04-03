@@ -11,7 +11,7 @@ PENNYSAMPLEWIDTH = 200
 
 #infile = "reduced.jpg"
 #infile = "/home/mike/Desktop/pennySample.pnm"
-infile = "/home/mike/Desktop/gscan-sample.jpg"
+infile = "gscan-sample.jpg"
 
 circles = []
 postViewing = Image.open(infile)
