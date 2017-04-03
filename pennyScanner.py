@@ -10,14 +10,15 @@ import pygame
 import pygame.camera
 import pygame.font
 from PIL import Image, ImageOps, ImageDraw
-import glob
+from sampleFilenameHandler import \
+	getNextSampleFilename, incrementFilename
 from pennyArt import \
-     getCircleAverageLuminosity, \
-     getAllPointsInCircle, \
-     unPicklePennies, \
-     pickleHelper
+	getCircleAverageLuminosity, \
+    getAllPointsInCircle, \
+    unPicklePennies, \
+    pickleHelper
 
-DEVICE = '/dev/video1'
+DEVICE = '/dev/video0'
 SIZE = (1280, 720)
 FILENAME = 'capture.png'
 #Sample basenames must have {number} in them and use 6-digit number in the scheme
@@ -31,37 +32,6 @@ radius = 180
 
 #speedup for finding circle points (do it once for each sample size):
 circlePointsSet = {}
-
-def getNextSampleFilename():
-    #This will be called once and will find the highest
-    #existing sample number and increment it by 1.
-    #It will work even if there are some samples missing
-    query = glob.glob(SAMPLEBASENAME.format(number="*"))
-    if query == []:
-        return SAMPLEBASENAME.format(number="000001")
-    else:
-        fileNumIdx = getFileNumIdx()
-        highest = 0
-        for fn in query:
-            testVal = int(fn[fileNumIdx:fileNumIdx+6])
-            if  testVal > highest:
-                highest = testVal
-        return makeSampleFilename(highest+1)
-
-def getFileNumIdx():
-    premask = SAMPLEBASENAME.format(number="######")
-    fileNumIdx = len(premask.split("######")[0])
-    return fileNumIdx
-
-def makeSampleFilename(num):
-    nextNum = str(num)
-    nextNum = '0'*(6-len(nextNum)) + nextNum
-    return SAMPLEBASENAME.format(number=nextNum)
-
-def incrementFilename(curFn):
-    fileNumIdx = getFileNumIdx()
-    highest = int(curFn[fileNumIdx:fileNumIdx+6])+1
-    return makeSampleFilename(highest)   
 
 def makeCircleMask():
     #Tricks to make everything but penny transparent using mask:
