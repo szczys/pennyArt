@@ -34,6 +34,21 @@ def map256(vals):
         returnDict[returnKey] = k
     return returnDict
 
+def popTriagePenny(pMap, pennySpread, triagePennies):
+    """Return penny information and remove it from the two input lists"""
+    #getPenny filename
+    #remove penny from list
+    #remove this liminostiy value from both lists as necessary
+    #return penny filename
+    return "Needs implemenation"
+
+def popTriagePixel(closestPixMap, imageSpread, pixelList):
+    """Return pixel information and remove it from the two input lists"""
+    #get pixel coordinates
+    #remove pixel from list
+    #remove this liminostiy value from both lists as necessary
+    #return pixle coordinates
+    return "Needs implemenation"
 
 def placePennies(penDict,pixelList,maxError):
     """Place pennies in the image matching best as possible
@@ -78,15 +93,25 @@ def placePennies(penDict,pixelList,maxError):
         for pMap in pennySpread.keys():
             closestPixMap = min(imgSpread.keys(), key=lambda x:abs(x-pMap))
             print pMap,closestPixMap
-            ### record pixelLocation, pennySampleFn, error margin
+
+            if (abs(pMap-closestPixMap) <= errorMargin) or maxError == 0:
+                ### get penny info and remove it from the set
+                thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
+                ### get pixel info and remvoe it from the set
+                thisPixel = popTriagePixel(closestPixMap, imgSpread, pixelList)
+                ### record pixelLocation, pennySampleFn, error margin
+                matchedPennyList.append([thisPixel, thisPenny, errorMargin])
         ### increment the error margin
         errorMargin += 1
-        cantMatchFlag = True
+
         ### break if no pennies left
         ### break if image pixels have all been filled
         ### break if error margin too great
+        if errorMargin > 255 or \
+            (maxError > 0 and errorMargin > maxError):
+            cantMatchFlag = True
         ### goto loop
     ## return recorded set and set of pixelLocations still remaining
     return matchedPennyList,
 
-placePennies(penValues, mosaicVals, 0)
+placePennies(penValues, mosaicVals, 1)
