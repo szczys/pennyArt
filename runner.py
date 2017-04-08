@@ -36,11 +36,16 @@ def map256(vals):
 
 def popTriagePenny(pMap, pennySpread, triagePennies):
     """Return penny information and remove it from the two input lists"""
-    #getPenny filename
-    #remove penny from list
+    mapIndex = pennySpread[pMap]
+    #getPenny filename & remove penny from list
+    pennyFn = triagePennies[mapIndex].pop()
     #remove this liminostiy value from both lists as necessary
+    if len(triagePennies[mapIndex]) == 0:
+        triagePennies.pop(mapIndex,None)
+        pennySpread.pop(mapIndex,None)
+        print "Pennies Left:",len(triagePennies.keys())
     #return penny filename
-    return "Needs implemenation"
+    return pennyFn
 
 def popTriagePixel(closestPixMap, imageSpread, pixelList):
     """Return pixel information and remove it from the two input lists"""
@@ -95,23 +100,32 @@ def placePennies(penDict,pixelList,maxError):
             print pMap,closestPixMap
 
             if (abs(pMap-closestPixMap) <= errorMargin) or maxError == 0:
-                ### get penny info and remove it from the set
-                thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
-                ### get pixel info and remvoe it from the set
-                thisPixel = popTriagePixel(closestPixMap, imgSpread, pixelList)
-                ### record pixelLocation, pennySampleFn, error margin
-                matchedPennyList.append([thisPixel, thisPenny, errorMargin])
+                ### make sure we didn't already pull all these pennies
+                if pMap in pennySpread.keys():
+                    ### get penny info and remove it from the set
+                    thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
+                    ### get pixel info and remvoe it from the set
+                    thisPixel = popTriagePixel(closestPixMap, imgSpread, pixelList)
+                    ### record pixelLocation, pennySampleFn, error margin
+                    matchedPennyList.append([thisPixel, thisPenny, errorMargin])
         ### increment the error margin
         errorMargin += 1
 
         ### break if no pennies left
         ### break if image pixels have all been filled
         ### break if error margin too great
-        if errorMargin > 255 or \
+        if len(pennyTriage) == 0 or \
+            len(pixelList) == 0 or \
+            errorMargin > 255 or \
             (maxError > 0 and errorMargin > maxError):
             cantMatchFlag = True
         ### goto loop
     ## return recorded set and set of pixelLocations still remaining
-    return matchedPennyList,
+    return matchedPennyList,pixelList
 
-placePennies(penValues, mosaicVals, 1)
+penData,leftoverPix = placePennies(penValues, mosaicVals, 1)
+print
+print len(penData)
+print penData
+print
+print len(leftoverPix)
