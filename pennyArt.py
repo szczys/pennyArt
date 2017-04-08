@@ -25,7 +25,7 @@ mosaicData = []
 #triagePennies variable will repeat penny use if False.
 #this is useful if you have a small penny set and just want
 #a preview using repeating images
-triagePennies = False
+triagePennies = True
 
 def getMapData(mosaicSet, pennySet):
 
@@ -204,7 +204,7 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
     #horizontal distances should be easy:
     horizontalBisect = radius
 
-    #vertial is trickier (non-integer)
+    #vertical is trickier (non-integer)
     verticalDist = int(sqrt(((horizontalBisect*2)**2)-(horizontalBisect**2)))
 
     #stock colors
@@ -321,3 +321,16 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
 
     pygame.quit()
     #return circlesAndLum
+
+def betterMapTest():
+	#try running runGame() first
+	global mosaicData
+	targetImageLumDict = {}
+	for i in mosaicData:
+		if i[1] not in targetImageLumDict.keys():
+			targetImageLumDict[i[1]] = 1
+		else:
+			targetImageLumDict[i[1]] = targetImageLumDict[i[1]] + 1
+	
+	#Can we normalize both pennies and target image luminosities to a 0-127 span just for easy/best mapping?
+	return targetImageLumDict
