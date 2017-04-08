@@ -46,6 +46,7 @@ def countValsInDict(myDict):
 def popTriagePenny(pMap, pennySpread, triagePennies):
     """Return penny information and remove it from the two input lists"""
     mapIndex = pennySpread[pMap]
+    logging.debug("popTriagePenny-- pMap {0} // spreadRef {1} // fn {2}".format(pMap,mapIndex,triagePennies[mapIndex]))
     #getPenny filename & remove penny from list
     pennyFn = triagePennies[mapIndex].pop()
     #remove this liminostiy value from both lists as necessary
@@ -113,12 +114,15 @@ def placePennies(penDict,pixelList,maxError):
                 ### make sure we didn't already pull all these pennies
 
                 if pMap in pennySpread.keys():
+                    logging.debug("Processing this match")
                     ### get penny info and remove it from the set
                     thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
+                    logging.debug("thisPenny {0}".format(thisPenny))
                     ### get pixel info and remvoe it from the set
                     thisPixel = popTriagePixel(closestPixMap, imgSpread, pixelList)
                     ### record pixelLocation, pennySampleFn, error margin
                     matchedPennyList.append([thisPixel, thisPenny, errorMargin])
+                    #logging.debug("Penny Luminosities Left: {0}".format(len(triagePennies.keys())))
             else:
                 logging.debug("Skipping (outside errorMargin)")
         ### increment the error margin
