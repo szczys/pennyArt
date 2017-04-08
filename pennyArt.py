@@ -226,7 +226,7 @@ def runGame(sourceImage='mahler2-cropped.jpg',radius=32,scalingValue=8,usePennie
 	#Get pixel data from source image
 	print "Calculating luminance of penny areas"
 	circlesAndLum = getLuminosityValues(testPoints, scalingValue, radius, sourceImage)
-	pickleHelper('circlesAndLum.p')
+	pickleHelper('circlesAndLum.p',circlesAndLum)
 	global mosaicData
 	mosaicData = circlesAndLum
 	print "Total pennies for this mosaic:",len(circlesAndLum)
