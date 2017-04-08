@@ -3,13 +3,11 @@ import pennyArt
 penValues = pennyArt.unPicklePennies()
 
 mosaicVals = pennyArt.unPicklePaintByNumber()
-for i in mosaicVals:
-    print i
 #print penValues.keys()
 
 #get the nearest value in a list or set of dict keys
-print min(penValues, key=lambda x:abs(x-51))
-print min(penValues, key=lambda x:abs(x-99))
+#print min(penValues, key=lambda x:abs(x-51))
+#print min(penValues, key=lambda x:abs(x-99))
 
 
 def map256(vals):
@@ -36,10 +34,32 @@ def map256(vals):
         returnDict[returnKey] = k
     return returnDict
 
-#Let's place pennies in the image as best we can:
-def placePennies():
-    pennySpread = map256(penValues)
-    imgSpread = map256(mosaicVals)
+
+def placePennies(penDict,pixelList):
+    """Place pennies in the image matching best as possible
+
+    Attributes:
+    * penDict like dict(luminosity:[pennyFilename1,pennyFilename2])
+    * pixelList like list((x,y),luminosity)
+
+    Returns:
+    * list like list((x,y),pennyFilename,errorMargin)
+    * leftover pixelList like list((x,y),luminosity)
+
+    """
+    #get dicts we can remove pennies and pixels from
+    pennyTriage = dict(penDict)
+    mosaicDict = {}
+    for m in pixelList:
+        mosaicDict.setdefault(m[1],[]).append(m[0])
+    print mosaicDict
+
+    #get value spans (do this before removing from these dicts)
+    pennySpread = map256(pennyTriage)
+    imgSpread = map256(mosaicDict)
+
+    print len(pennySpread)
+    print len(imgSpread)
 
     #TODO: Implement way to generate ideal penny list (or need)
 
@@ -55,3 +75,5 @@ def placePennies():
     ### break if error margin too great
     ### goto loop
     ## return recorded set and set of pixelLocations still remaining
+
+placePennies(penValues, mosaicVals)
