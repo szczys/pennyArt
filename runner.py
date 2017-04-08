@@ -1,8 +1,8 @@
 import pennyArt
 
-penValues = pennyArt.unPickleHelper('pennySet.p')
+penValues = pennyArt.unPicklePennies()
 
-mosaicVals = pennyArt.unPickleHelper('paintByNumber.p')
+mosaicVals = pennyArt.unPicklePaintByNumber()
 for i in mosaicVals:
     print i
 #print penValues.keys()
@@ -36,8 +36,22 @@ def map256(vals):
         returnDict[returnKey] = k
     return returnDict
 
-test = [penValues,{92:0, 49:0}, {255:0,0:0}, {2:0, 129:0}]
-print sorted(map256(penValues).keys())
-for i in test:
-    print i
-    print map256(i)
+#Let's place pennies in the image as best we can:
+def placePennies():
+    pennySpread = map256(penValues)
+    imgSpread = map256(mosaicVals)
+
+    #TODO: Implement way to generate ideal penny list (or need)
+
+    #Flow:
+    ## Start with penny set
+    ## set error margin
+    ## Begin loop;
+    ### iterate all pennies recording matches and removing from set
+    ### record pixelLocation, pennySampleFn, error margin
+    ### increment the error margin
+    ### break if no pennies left
+    ### break if image pixels have all been filled
+    ### break if error margin too great
+    ### goto loop
+    ## return recorded set and set of pixelLocations still remaining
