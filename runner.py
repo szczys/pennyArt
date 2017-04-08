@@ -1,4 +1,7 @@
 import pennyArt
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 penValues = pennyArt.unPicklePennies()
 
@@ -34,6 +37,12 @@ def map256(vals):
         returnDict[returnKey] = k
     return returnDict
 
+def countValsInDict(myDict):
+    valCount = 0
+    for i in myDict.keys():
+        valCount += len(myDict[i])
+    return valCount
+
 def popTriagePenny(pMap, pennySpread, triagePennies):
     """Return penny information and remove it from the two input lists"""
     mapIndex = pennySpread[pMap]
@@ -43,7 +52,7 @@ def popTriagePenny(pMap, pennySpread, triagePennies):
     if len(triagePennies[mapIndex]) == 0:
         triagePennies.pop(mapIndex,None)
         pennySpread.pop(mapIndex,None)
-        print "Pennies Left:",len(triagePennies.keys())
+        logging.debug("Penny Luminosities Left: {0}".format(len(triagePennies.keys())))
     #return penny filename
     return pennyFn
 
@@ -97,10 +106,12 @@ def placePennies(penDict,pixelList,maxError):
         ### iterate all pennies recording matches and removing from set
         for pMap in pennySpread.keys():
             closestPixMap = min(imgSpread.keys(), key=lambda x:abs(x-pMap))
-            print pMap,closestPixMap
+            logging.debug("Found nearest. Penny: {0} Pixel: {1}".format(pMap,closestPixMap))
 
-            if (abs(pMap-closestPixMap) <= errorMargin) or maxError == 0:
+            if (abs(pMap-closestPixMap) <= errorMargin):
+                logging.debug("SUCCESSFUL MATCH")
                 ### make sure we didn't already pull all these pennies
+
                 if pMap in pennySpread.keys():
                     ### get penny info and remove it from the set
                     thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
@@ -108,6 +119,8 @@ def placePennies(penDict,pixelList,maxError):
                     thisPixel = popTriagePixel(closestPixMap, imgSpread, pixelList)
                     ### record pixelLocation, pennySampleFn, error margin
                     matchedPennyList.append([thisPixel, thisPenny, errorMargin])
+            else:
+                logging.debug("Skipping (outside errorMargin)")
         ### increment the error margin
         errorMargin += 1
 
@@ -121,9 +134,11 @@ def placePennies(penDict,pixelList,maxError):
             cantMatchFlag = True
         ### goto loop
     ## return recorded set and set of pixelLocations still remaining
+
+    print "Pennies left:", countValsInDict(pennyTriage)
     return matchedPennyList,pixelList
 
-penData,leftoverPix = placePennies(penValues, mosaicVals, 1)
+penData,leftoverPix = placePennies(penValues, mosaicVals, 0)
 print
 print len(penData)
 print penData
