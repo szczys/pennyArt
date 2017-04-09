@@ -1,7 +1,7 @@
 import pennyArt
 import logging
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(filename='pennyMap.log',level=logging.DEBUG)
 
 penValues = pennyArt.unPicklePennies()
 
@@ -46,13 +46,14 @@ def countValsInDict(myDict):
 def popTriagePenny(pMap, pennySpread, triagePennies):
     """Return penny information and remove it from the two input lists"""
     mapIndex = pennySpread[pMap]
-    logging.debug("popTriagePenny-- pMap {0} // spreadRef {1} // fn {2}".format(pMap,mapIndex,triagePennies[mapIndex]))
     #getPenny filename & remove penny from list
     pennyFn = triagePennies[mapIndex].pop()
+
+    logging.debug("lum: {0} // pennyFn: {1} // remnant: {2}".format(mapIndex, pennyFn, triagePennies[mapIndex]))
     #remove this liminostiy value from both lists as necessary
     if len(triagePennies[mapIndex]) == 0:
         triagePennies.pop(mapIndex,None)
-        pennySpread.pop(mapIndex,None)
+        pennySpread.pop(pMap,None)
         logging.debug("Penny Luminosities Left: {0}".format(len(triagePennies.keys())))
     #return penny filename
     return pennyFn
@@ -115,6 +116,7 @@ def placePennies(penDict,pixelList,maxError):
 
                 if pMap in pennySpread.keys():
                     logging.debug("Processing this match")
+                    logging.debug("pennyTriage keys {0}".format(pennyTriage.keys()))
                     ### get penny info and remove it from the set
                     thisPenny = popTriagePenny(pMap, pennySpread, pennyTriage)
                     logging.debug("thisPenny {0}".format(thisPenny))
@@ -125,6 +127,8 @@ def placePennies(penDict,pixelList,maxError):
                     #logging.debug("Penny Luminosities Left: {0}".format(len(triagePennies.keys())))
             else:
                 logging.debug("Skipping (outside errorMargin)")
+
+            logging.debug("========")
         ### increment the error margin
         errorMargin += 1
 
